@@ -4,6 +4,7 @@
     *  <a href="#socketon">socket.on</a>
 *  <a href="#express-serverjs">express-server.js</a>
 *  <a href="#vuetifyjs">Vuetify.js</a>
+    *  <a href="#v-bottom-navigation">v-bottom-navigation</a>
 
 ## socket.io
 
@@ -73,7 +74,17 @@ socket.on('chat message', function(msg){
 
 ## Vuetify.js
 *  Vue Material Design Component Framework(質感設計框架)
+*  icons 都在 https://materialdesignicons.com/ (在v-icon裡填入"mdi-圖片名稱")
 
 vue cli 3
 ```vue add vuetify```
 
+
+### v-bottom-navigation
+*  bug 修復需在 style 裡+上以下這段
+
+```
+.v-item-group.v-bottom-navigation .v-btn.v-size--default {
+    height: inherit;
+}
+```

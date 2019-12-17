@@ -1,44 +1,14 @@
 <template>
 <v-container>
-    <h1>Lobby</h1>
-    <!-- <p>getLobby {{ getLobby }}</p> -->
-
-
-    <!-- <v-form
-    class="name-form"
-    ref="form"
-    v-model="nameValid"
-    lazy-validation
-    @submit.prevent="setName(lobby.name)"
-    v-if="isShowInputName"
-    >
-
-        <v-text-field
-          v-model="lobby.name"
-          :counter="10"
-          :rules="nameRules"
-          label="輸入暱稱..."
-          required
-          ref="name"
-        ></v-text-field>
-
-        <v-btn
-        class="blue darken-2"
-        type="submit">
-            <v-icon>mdi-send</v-icon>
-        </v-btn>
-    </v-form> -->
-    
-
-    
-
+    <h1>Chat</h1>
+    <h2>在來要配對</h2>
     <v-card
     class="chat-box"
     dark>
-        <div v-for="(msg, index) in getLobby"
+        <div v-for="(msg, index) in chats"
              :key="index">
             <span
-            :class="{ 'red--text': lobby.name == msg.name }">
+            :class="{ 'red--text': chat.name == msg.name }">
                 {{ msg.name }}: {{ msg.content }}
             </span>
         </div>
@@ -46,10 +16,10 @@
 
     <v-form
     class="msg-form"
-    ref="lobbyForm"
-    v-model="lobbyValid"
+    ref="chatForm"
+    v-model="chatValid"
     lazy-validation
-    @submit.prevent="sendMsg(lobby)"
+    @submit.prevent="sendMsg(chat)"
     >
         <v-container>
             <v-row>
@@ -59,7 +29,7 @@
                 xs="12"
                 >
                     <v-text-field
-                      v-model="lobby.content"
+                      v-model="chat.content"
                       :counter="100"
                       :contentes="contentRules"
                       label="輸入訊息..."
@@ -85,23 +55,18 @@
 
 <script>
 
-// import io from 'socket.io-client';
-// import socketOptions from '../socket-options.js'
-
 export default {
-    name: 'home',
+    name: 'chat',
     components: {},
     data: function() {
         return {
-            // socket: io(socketOptions.url),
-            lobby: {
-                name: null,
+            chat: {
+                name: '',
                 content: ''
             },
-            isShowInputName: true,
-            // isShowModal: false,
-            // nameValid: false,
-            lobbyValid: false,
+            chats: [],
+            isPaired: false,
+            chatValid: false,
             contentRules: [
                 v => !!v || '不可為空',
                 v => (v && v.length <= 100) || '不能超過100個字',
@@ -109,26 +74,34 @@ export default {
         }
     },
     computed: {
-        getLobby: function() {
-            return this.$store.getters['lobby/getData']
-        }
+        getSocket: function() {
+            return this.$store.getters['socket/getData']
+        },
     },
     mounted: function() {
         if(this.getName()) {
-            this.lobby.name = this.getName();
+            this.chat.name = this.getName();
+
+            this.chats.push({
+                name: this.chat.name,
+                content: '123',
+            })
         }
 
-        // this.socket.on('lobby', serverMsg => {
-        //     this.serverMsg = serverMsg
-        // })
+
+
+        this.setSocketChecker(() => {
+            console.log('set socket.on(chat)')
+
+            this.getSocket.on('chat', (chat) => {
+                console.log(chat.content)
+                this.chats.push(chat)
+            })
+        })
     },
     methods: {
-        sendMsg: function(lobby) {
-            // this.socket.emit('lobby', lobby.content)
-            if(this.lobbyValid && lobby && this.getName()) {
-                this.lobby.name = this.getName()
-                this.$store.dispatch('lobby/addDataAction', lobby)
-            }
+        sendMsg: function(chat) {
+            this.getSocket.emit('chat', chat)
         },
         setName: function(name) {
             // set localStorage
@@ -140,7 +113,22 @@ export default {
         getName: function() {
             // get localStorage
             return localStorage.getItem('name')
-        }
+        },
+        setSocketChecker: function(callback) {
+            let time = 300
+
+            let checker = setInterval(() => {
+                try {
+                    console.log('wait socket connect')
+                    if(this.getSocket) {
+                        callback()
+                        clearInterval(checker)
+                    }
+                } catch {
+                    clearInterval(checker)
+                }
+            }, time)
+        },
     }
 }
 </script>

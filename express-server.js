@@ -18,11 +18,10 @@ io.on('connection', function(socket){
     console.log('online users:', users.map(user => user.id))
 
     // 自訂事件名稱並監聽其事件
-    socket.on('lobby', msg => {
-        console.log(`lobby from ${ socket.id }: ${ msg } `);
+    socket.on('chat', chat => {
+        console.log(`chat from ${ socket.id } ${ chat.name }: ${ chat.content } `);
 
-        socket.emit('lobby', `server: you send this: '${ msg }'`)
-
+        socket.emit('chat', chat)
     });
 
     socket.on('disconnect', () =>{
