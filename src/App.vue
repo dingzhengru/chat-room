@@ -1,6 +1,6 @@
 <template>
 <v-app>
-    <v-content>
+    <v-content style="padding-left: 80px;">
         <router-view/>
     </v-content>
 
@@ -13,13 +13,27 @@
       expand-on-hover
     >
         <v-list-item>
-
-            <v-list-item-title>
+            <v-list-item-avatar>
+                <v-avatar 
+                v-show="mini"
+                color="indigo" 
+                size="48">
+                    <span class="white--text headline">{{ getMinName }}</span>
+                </v-avatar>
+                <v-avatar 
+                v-show="!mini"
+                color="indigo" 
+                :min-width="150"
+                tile>
+                    <span class="white--text headline">{{ getName }}</span>
+                </v-avatar>
+            </v-list-item-avatar>
+            <!-- <v-list-item-title>
                 <v-btn
                 icon>
                     <v-icon>mdi-view-list</v-icon>
                 </v-btn>
-            </v-list-item-title>
+            </v-list-item-title> -->
 
         <!-- <v-btn
         icon
@@ -71,7 +85,7 @@
                 class="name-form"
                 ref="form"
                 v-model="nameValid"
-                @submit.prevent="setName(name)"
+                @submit.prevent="sendName(name)"
                 >
 
                     <v-text-field
@@ -105,14 +119,15 @@ export default {
     components: {},
     data: function() {
         return {
+            name: '',
+            avatarWidth: 200,
+            isShowModal: true,
             drawer: true,
             items: [
               { title: '大廳', icon: 'mdi-home', path: '/' },
               { title: '聊天', icon: 'mdi-chat', path: 'chat' },
             ],
             mini: true,
-            name: '',
-            isShowModal: false,
             nameValid: false,
             nameRules: [
                 v => !!v || '不可為空',
@@ -121,32 +136,105 @@ export default {
         }
     },
     computed: {
+        getSocket: function() {
+            return this.$store.getters['socket/getData']
+        },
+        getName: function() {
+            return this.$store.getters['socket/getName']
+        },
+        getMinName: function() {
+            let name = this.$store.getters['socket/getName']
+            return name.substring(0, 1)
+        },
     },
     mounted: function() {
         // localStorage.clear();
 
         // get name from localStorage
-        if(this.getName()) {
-            this.name = this.getName();
+        let name = localStorage.getItem('name') || null
+        if(name) {
+            this.name = name
+            this.setName(name)
         }
 
         // focus name input
-        // this.$nextTick(() => {
-        //     this.$refs.nameInputRef.focus();
-        // });
+        this.$nextTick(() => {
+            this.$refs.nameInputRef.focus();
+        });
+
+        // set socket(chat event)
+        this.setSocketChecker(() => {
+            console.log('set socket.on')
+
+            this.getSocket.on('pair', (isPaired) => {
+                // 配對成功
+                this.setIsPaired(true)
+                this.setIsPairing(false)
+            })
+
+            this.getSocket.on('unpair', () => {
+                // 解除配對
+
+                console.log('已解除配對')
+
+                this.setIsPaired(false)
+                this.setIsPairing(false)
+            })
+
+            this.getSocket.on('chat', chat => {
+                this.pushChats(chat)
+            })
+        })
+    },
+    beforeDestroy: function() {
+        this.getSocket.removeAllListeners()
+        this.getSocket.disconnect()
     },
     methods: {
         setName: function(name) {
             // set localStorage
-            if(this.nameValid && name) {
+            // set store-socket.name
+            if(this.nameValid && 
+               name &&
+               name.length <= 10) {
                 localStorage.setItem('name', name)
-                this.isShowModal = false
+                this.$store.commit('socket/setName', name)
+                return true
             }
+            return false
         },
-        getName: function() {
-            // get localStorage
-            return localStorage.getItem('name')
-        }
+        sendName: function(name) {
+            let nameIsOk = this.setName(name)
+            if(nameIsOk)
+                this.isShowModal = false
+        },
+        setIsPaired: function(boolean) {
+            this.$store.commit('socket/setIsPaired', boolean)
+        },
+        setIsPairing: function(boolean) {
+            this.$store.commit('socket/setIsPairing', boolean)
+        },
+        clearChats: function() {
+            this.$store.commit('socket/setChats', [])
+        },
+        pushChats: function(chat) {
+            this.$store.commit('socket/pushChats', chat)
+        },
+        setSocketChecker: function(callback) {
+            let time = 5000
+
+            let checker = setInterval(() => {
+                try {
+                    console.log('wait socket connect', this.getSocket)
+                    if(this.getSocket) {
+                        callback()
+                        clearInterval(checker)
+                    }
+                } catch {
+                    clearInterval(checker)
+                }
+            }, time)
+        },
     }
 };
 </script>

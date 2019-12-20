@@ -1,37 +1,7 @@
 <template>
 <v-container>
     <h1>Lobby</h1>
-    <!-- <p>getLobby {{ getLobby }}</p> -->
-
-
-    <!-- <v-form
-    class="name-form"
-    ref="form"
-    v-model="nameValid"
-    lazy-validation
-    @submit.prevent="setName(lobby.name)"
-    v-if="isShowInputName"
-    >
-
-        <v-text-field
-          v-model="lobby.name"
-          :counter="10"
-          :rules="nameRules"
-          label="輸入暱稱..."
-          required
-          ref="name"
-        ></v-text-field>
-
-        <v-btn
-        class="blue darken-2"
-        type="submit">
-            <v-icon>mdi-send</v-icon>
-        </v-btn>
-    </v-form> -->
     
-
-    
-
     <v-card
     class="chat-box"
     dark>
@@ -59,11 +29,12 @@
                 xs="12"
                 >
                     <v-text-field
-                      v-model="lobby.content"
-                      :counter="100"
-                      :contentes="contentRules"
-                      label="輸入訊息..."
-                      required
+                    v-model="lobby.content"
+                    :counter="100"
+                    :rules="contentRules"
+                    label="輸入訊息..."
+                    required
+                    ref="lobbyContentRef"
                     ></v-text-field>
                 </v-col>
                 <v-col
@@ -93,54 +64,62 @@ export default {
     components: {},
     data: function() {
         return {
-            // socket: io(socketOptions.url),
             lobby: {
                 name: null,
                 content: ''
             },
             isShowInputName: true,
-            // isShowModal: false,
-            // nameValid: false,
             lobbyValid: false,
             contentRules: [
                 v => !!v || '不可為空',
-                v => (v && v.length <= 100) || '不能超過100個字',
+                v => (v && v.length <= 100) || '超過100個字',
             ]
         }
     },
     computed: {
         getLobby: function() {
             return this.$store.getters['lobby/getData']
-        }
+        },
+        getName: function() {
+            return this.$store.getters['socket/getName']
+        },
+        getContent: function() {
+            return this.$store.getters['lobby/getContent']
+        },
     },
     mounted: function() {
-        if(this.getName()) {
-            this.lobby.name = this.getName();
+        if(this.getName) {
+            this.lobby.name = this.getName;
         }
 
-        // this.socket.on('lobby', serverMsg => {
-        //     this.serverMsg = serverMsg
-        // })
+        if(this.getContent) {
+            this.lobby.content = this.getContent
+        }
+
+        // focus input
+        this.$nextTick(() => {
+            this.$refs.lobbyContentRef.focus();
+        });
+    },
+    beforeDestroy: function() {
+        this.setContent(this.lobby.content);
     },
     methods: {
         sendMsg: function(lobby) {
-            // this.socket.emit('lobby', lobby.content)
-            if(this.lobbyValid && lobby && this.getName()) {
-                this.lobby.name = this.getName()
+            if(this.lobbyValid && lobby && this.getName) {
+                this.lobby.name = this.getName
                 this.$store.dispatch('lobby/addDataAction', lobby)
+                .then(() => {
+                    this.clearLobbyContent()
+                })
             }
         },
-        setName: function(name) {
-            // set localStorage
-            if(this.nameValid && name) {
-                localStorage.setItem('name', name)
-                this.isShowModal = false
-            }
+        clearLobbyContent: function() {
+            this.lobby.content = ''
         },
-        getName: function() {
-            // get localStorage
-            return localStorage.getItem('name')
-        }
+        setContent: function(content) {
+            this.$store.commit('lobby/setContent', content)
+        },
     }
 }
 </script>
@@ -158,6 +137,7 @@ export default {
     bottom: 0;
     width: 100%;
     background-color: skyblue;
+    padding-left: 80px;
 }
 
 </style>

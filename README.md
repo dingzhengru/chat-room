@@ -2,9 +2,13 @@
     *  <a href="#install">install</a>
     *  <a href="#connection">connection</a>
     *  <a href="#socketon">socket.on</a>
+    *  <a href="#chat">chat</a>
+    *  <a href="#pair">pair</a>
+    *  <a href="#unpair">unpair</a>
 *  <a href="#express-serverjs">express-server.js</a>
 *  <a href="#vuetifyjs">Vuetify.js</a>
     *  <a href="#v-bottom-navigation">v-bottom-navigation</a>
+    *  <a href="#v-tooltip">v-tooltip</a>
 
 ## socket.io
 
@@ -68,6 +72,34 @@ socket.on('chat message', function(msg){
 });
 ```
 
+### chat
+*  client: 單純把輸入的內容傳給 server 
+*  server: 把接收到的 msg 發送給此socket與socket.pairUser
+
+client
+```
+this.getSocket.on('chat', (chat) => {
+    console.log(chat.content)
+    this.chats.push(chat)
+})
+```
+server
+```
+socket.on('chat', chat => {
+    // 確認配對
+    if(!socket.pairUser)
+        return
+    socket.emit('chat', chat)
+    socket.pairUser.emit('chat', chat)
+})
+```
+### pair
+*  client: 單純發送一個信號，表示要配對而已(沒有傳任何資料)
+*  server: 進行配對，並把配對的對象存到 socket.pairUser，且要把對方的 pairUser 也存進我方的socket
+
+### unpair
+
+
 ## express-server.js
 
 
@@ -87,4 +119,29 @@ vue cli 3
 .v-item-group.v-bottom-navigation .v-btn.v-size--default {
     height: inherit;
 }
+```
+
+### v-tooltip
+*  如何在disabled button 上顯示(btn外多包一個div，且v-on放在div上)
+
+如何在disabled button 上顯示
+```
+<v-tooltip 
+top
+:disabled="isPaired">
+    <template 
+    v-slot:activator="{ on }">
+        <div
+        v-on="on">
+            <v-btn
+            class="yellow darken-2"
+            type="submit"
+            block
+            :disabled="!isPaired">
+                <v-icon>mdi-send</v-icon>
+            </v-btn>
+        </div>
+    </template>
+        <span>請先配對</span>
+</v-tooltip>
 ```

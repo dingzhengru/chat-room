@@ -1,11 +1,65 @@
 <template>
 <v-container>
     <h1>Chat</h1>
-    <h2>在來要配對</h2>
+    <p>{{ getIsPaired }}</p>
+    <p>{{ getIsPairing }}</p>
+    <p>{{ chat.name }}</p>
+    <p>{{ getName }}</p>
+    <div>
+        <v-row>
+            <v-col
+            cols="12"
+            sm="6"
+            xs="12"
+            >
+                <v-btn
+                class="success"
+                block
+                :loading="getIsPairing"
+                :disabled="getIsPairing || getIsPaired"
+                @click="pair()"
+                >
+                    <span
+                    v-if="!getIsPaired">
+                        配對
+                    </span>
+                    <span
+                    v-if="getIsPaired">
+                        配對成功
+                    </span>
+                </v-btn>
+            </v-col>
+            <!-- <v-col
+            cols="12"
+            sm="4"
+            xs="12"
+            >
+                <v-btn
+                class="info"
+                block
+                >
+                    重新配對
+                </v-btn>
+            </v-col> -->
+            <v-col
+            cols="12"
+            sm="6"
+            xs="12"
+            >
+                <v-btn
+                class="warning"
+                block
+                @click="unpair()"
+                >
+                    取消配對
+                </v-btn>
+            </v-col>
+        </v-row>
+    </div>
     <v-card
     class="chat-box"
     dark>
-        <div v-for="(msg, index) in chats"
+        <div v-for="(msg, index) in getChats"
              :key="index">
             <span
             :class="{ 'red--text': chat.name == msg.name }">
@@ -31,21 +85,34 @@
                     <v-text-field
                       v-model="chat.content"
                       :counter="100"
-                      :contentes="contentRules"
+                      :rules="contentRules"
                       label="輸入訊息..."
                       required
+                      ref="chatContentRef"
                     ></v-text-field>
                 </v-col>
                 <v-col
                 cols="12"
                 sm="2"
                 xs="12">
-                    <v-btn
-                    class="yellow darken-2"
-                    type="submit"
-                    block>
-                        <v-icon>mdi-send</v-icon>
-                    </v-btn>
+                    <v-tooltip 
+                    top
+                    :disabled="getIsPaired">
+                        <template 
+                        v-slot:activator="{ on }">
+                            <div
+                            v-on="on">
+                                <v-btn
+                                class="yellow darken-2"
+                                type="submit"
+                                block
+                                :disabled="!getIsPaired">
+                                    <v-icon>mdi-send</v-icon>
+                                </v-btn>
+                            </div>
+                        </template>
+                            <span>請先配對</span>
+                    </v-tooltip>
                 </v-col>
             </v-row>
         </v-container>
@@ -64,12 +131,10 @@ export default {
                 name: '',
                 content: ''
             },
-            chats: [],
-            isPaired: false,
             chatValid: false,
             contentRules: [
                 v => !!v || '不可為空',
-                v => (v && v.length <= 100) || '不能超過100個字',
+                v => (v && v.length <= 100) || '超過100個字',
             ]
         }
     },
@@ -77,57 +142,83 @@ export default {
         getSocket: function() {
             return this.$store.getters['socket/getData']
         },
+        getName: function() {
+            return this.$store.getters['socket/getName']
+        },
+        getContent: function() {
+            return this.$store.getters['socket/getContent']
+        },
+        getIsPaired: function() {
+            return this.$store.getters['socket/getIsPaired']
+        },
+        getIsPairing: function() {
+            return this.$store.getters['socket/getIsPairing']
+        },
+        getChats: function() {
+            return this.$store.getters['socket/getChats']
+        },
     },
     mounted: function() {
-        if(this.getName()) {
-            this.chat.name = this.getName();
-
-            this.chats.push({
-                name: this.chat.name,
-                content: '123',
-            })
+        let name = this.getName || localStorage.getItem('name')
+        if(name) {
+            this.chat.name = name;
         }
 
+        if(this.getContent) {
+            this.chat.content = this.getContent;
+        }
 
-
-        this.setSocketChecker(() => {
-            console.log('set socket.on(chat)')
-
-            this.getSocket.on('chat', (chat) => {
-                console.log(chat.content)
-                this.chats.push(chat)
-            })
-        })
+        // focus input
+        this.$nextTick(() => {
+            this.$refs.chatContentRef.focus();
+        });
+    },
+    beforeDestroy: function() {
+        this.setContent(this.chat.content);
     },
     methods: {
-        sendMsg: function(chat) {
-            this.getSocket.emit('chat', chat)
-        },
-        setName: function(name) {
-            // set localStorage
-            if(this.nameValid && name) {
-                localStorage.setItem('name', name)
-                this.isShowModal = false
+        pair: function() {
+            console.log('配對')
+
+            // 配對中
+            // this.isPairing = true
+            this.setIsPairing(true)
+
+            try {
+                this.getSocket.emit('pair')
+            } catch {
+                // this.isPairing = false
+                this.setIsPairing(false)
+                console.error('配對失敗')
             }
         },
-        getName: function() {
-            // get localStorage
-            return localStorage.getItem('name')
-        },
-        setSocketChecker: function(callback) {
-            let time = 300
+        unpair: function() {
+            console.log('取消配對')
 
-            let checker = setInterval(() => {
-                try {
-                    console.log('wait socket connect')
-                    if(this.getSocket) {
-                        callback()
-                        clearInterval(checker)
-                    }
-                } catch {
-                    clearInterval(checker)
-                }
-            }, time)
+            try {            
+                this.getSocket.emit('unpair')
+            } catch {                
+                console.error('取消配對失敗')
+            }
+        },
+        sendMsg: function(chat) {
+            try {
+                this.getSocket.emit('chat', chat)
+            } catch {
+                console.error('傳送資料失敗')
+            }
+        },
+        setIsPaired: function(boolean) {
+            this.$store.commit('socket/setIsPaired', boolean)
+        },
+        setIsPairing: function(boolean) {
+            this.$store.commit('socket/setIsPairing', boolean)
+        },
+        clearChats: function() {
+            this.$store.commit('socket/setChats', [])
+        },
+        setContent: function(content) {
+            this.$store.commit('socket/setContent', content)
         },
     }
 }
@@ -146,6 +237,7 @@ export default {
     bottom: 0;
     width: 100%;
     background-color: skyblue;
+    padding-left: 80px;
 }
 
 </style>

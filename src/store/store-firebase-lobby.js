@@ -17,6 +17,7 @@ export default {
     state: {
         collection: 'lobby',
         data: null,
+        content: '',
     },
     getters: {
         getData: (state) => {
@@ -26,10 +27,16 @@ export default {
             let data = state.data || [];
             return data.find(item => item.id == id)
         },
+        getContent: (state) => {
+            return state.content;
+        },
     },
     mutations: {
         setData(state, payload) {
             state.data = payload;
+        },
+        setContent(state, payload) {
+            state.content = payload;
         },
     },
     actions: {

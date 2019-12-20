@@ -13,8 +13,6 @@ import socketOptions from './socket-options.js'
 
 let socket = io(socketOptions.url)
 
-console.log(socket.connected)
-
 new Vue({
     router,
     store,
