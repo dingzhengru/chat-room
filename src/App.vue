@@ -1,6 +1,6 @@
 <template>
 <v-app>
-    <v-content style="padding-left: 80px;">
+    <v-content class="main-content">
         <router-view/>
     </v-content>
 
@@ -241,6 +241,9 @@ export default {
 
 <style lang="scss">
 
+.main-content {
+    padding-left: 80px !important;
+}
 
 .v-item-group.v-bottom-navigation .v-btn.v-size--default {
     height: inherit;

@@ -3,7 +3,6 @@
     <h1>Chat</h1>
     <p>{{ getIsPaired }}</p>
     <p>{{ getIsPairing }}</p>
-    <p>{{ chat.name }}</p>
     <p>{{ getName }}</p>
     <div>
         <v-row>
@@ -62,7 +61,7 @@
         <div v-for="(msg, index) in getChats"
              :key="index">
             <span
-            :class="{ 'red--text': chat.name == msg.name }">
+            :class="{ 'red--text': getName == msg.name }">
                 {{ msg.name }}: {{ msg.content }}
             </span>
         </div>
@@ -73,7 +72,7 @@
     ref="chatForm"
     v-model="chatValid"
     lazy-validation
-    @submit.prevent="sendMsg(chat)"
+    @submit.prevent="sendMsg(content)"
     >
         <v-container>
             <v-row>
@@ -83,7 +82,7 @@
                 xs="12"
                 >
                     <v-text-field
-                      v-model="chat.content"
+                      v-model="content"
                       :counter="100"
                       :rules="contentRules"
                       label="輸入訊息..."
@@ -127,10 +126,7 @@ export default {
     components: {},
     data: function() {
         return {
-            chat: {
-                name: '',
-                content: ''
-            },
+            content: '',
             chatValid: false,
             contentRules: [
                 v => !!v || '不可為空',
@@ -159,10 +155,10 @@ export default {
         },
     },
     mounted: function() {
-        let name = this.getName || localStorage.getItem('name')
-        if(name) {
-            this.chat.name = name;
-        }
+        // let name = this.getName || localStorage.getItem('name')
+        // if(name) {
+        //     this.chat.name = name;
+        // }
 
         if(this.getContent) {
             this.chat.content = this.getContent;
@@ -201,7 +197,11 @@ export default {
                 console.error('取消配對失敗')
             }
         },
-        sendMsg: function(chat) {
+        sendMsg: function(content) {
+            let chat = {
+                name: this.getName,
+                content: this.content
+            }
             try {
                 this.getSocket.emit('chat', chat)
             } catch {
