@@ -77,9 +77,7 @@ export default {
                     snapshot.forEach((doc) => {
                         data.id = Number(doc.data().id) + 1;
                         data.created = new Date(Date.now());
-                        data.editDate = data.created;
-                        data.latestPostDate = data.created;
-
+                        
                         db.collection(state.collection).add(data)
                         .then(() => {
                             // update data(更新state的資料)

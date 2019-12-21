@@ -1,14 +1,18 @@
 <template>
 <v-container>
-    <h1>Chat</h1>
-    <p>{{ getIsPaired }}</p>
+    <h1>聊天室</h1>
+    <blockquote class="blockquote">
+        配對對象: 正在等待配對的使用者中隨機選取一位
+    </blockquote>
+    <!-- <p>{{ getIsPaired }}</p>
     <p>{{ getIsPairing }}</p>
     <p>{{ getName }}</p>
+    <p>{{ getSocket.id }}</p> -->
     <div>
         <v-row>
             <v-col
             cols="12"
-            sm="6"
+            sm="5"
             xs="12"
             >
                 <v-btn
@@ -28,21 +32,9 @@
                     </span>
                 </v-btn>
             </v-col>
-            <!-- <v-col
-            cols="12"
-            sm="4"
-            xs="12"
-            >
-                <v-btn
-                class="info"
-                block
-                >
-                    重新配對
-                </v-btn>
-            </v-col> -->
             <v-col
             cols="12"
-            sm="6"
+            sm="5"
             xs="12"
             >
                 <v-btn
@@ -53,17 +45,63 @@
                     取消配對
                 </v-btn>
             </v-col>
+            <v-col
+            cols="12"
+            sm="2"
+            xs="12"
+            >
+                <v-btn
+                class="error"
+                block
+                @click="clearChats()"
+                >
+                    清空
+                </v-btn>
+            </v-col>
         </v-row>
     </div>
     <v-card
     class="chat-box"
-    dark>
-        <div v-for="(msg, index) in getChats"
+    >
+        <!-- <div v-for="(msg, index) in getChats"
              :key="index">
             <span
-            :class="{ 'red--text': getName == msg.name }">
+            :class="{ 'red--text': getSocket.id == msg.id }">
                 {{ msg.name }}: {{ msg.content }}
             </span>
+        </div> -->
+        <!-- 這裡把每個 msg 都加上一個 isMax 來判斷是否要放大-->
+        <div v-for="(msg, index) in getChats"
+             :key="index"
+             class="d-flex">
+            <div
+            class="mt-2 ml-2">
+                <v-avatar 
+                :size="32"
+                :width="msg.isMax ? 150 : null"
+                :tile="msg.isMax ? true : false"
+                :class="{ 
+                    'indigo': getSocket.id == msg.socketId,
+                    'green': getSocket.id != msg.socketId 
+                }"
+                @mouseover="mouseoverAvatar(msg)"
+                @mouseleave="mouseleaveAvatar(msg)"
+                >
+                    <span 
+                    class="white--text headline"
+                    v-show="!msg.isMax">
+                        {{ getMiniName(msg.name) }}
+                    </span>
+                    <span 
+                    class="white--text headline"
+                    v-show="msg.isMax">
+                        {{ msg.name }}
+                    </span>
+                </v-avatar>
+                <span>
+                    {{ msg.content }}
+                </span>
+            </div>
         </div>
     </v-card>
 
@@ -199,11 +237,13 @@ export default {
         },
         sendMsg: function(content) {
             let chat = {
+                socketId: this.getSocket.id,
                 name: this.getName,
                 content: this.content
             }
             try {
                 this.getSocket.emit('chat', chat)
+                this.clearChatContent()
             } catch {
                 console.error('傳送資料失敗')
             }
@@ -215,11 +255,24 @@ export default {
             this.$store.commit('socket/setIsPairing', boolean)
         },
         clearChats: function() {
-            this.$store.commit('socket/setChats', [])
+            if(confirm('確定清空嗎'))
+                this.$store.commit('socket/setChats', [])
         },
         setContent: function(content) {
             this.$store.commit('socket/setContent', content)
         },
+        clearChatContent: function() {
+            this.content = ''
+        },
+        mouseoverAvatar: function(msg) {
+            this.$set(msg, 'isMax', true)
+        },
+        mouseleaveAvatar: function(msg) {
+            this.$set(msg, 'isMax', false)
+        },
+        getMiniName: function(name) {
+            return name.substring(0, 1)
+        }
     }
 }
 </script>

@@ -8,6 +8,12 @@ app.get('/', function(req, res){
 
 const users = [] // 存放在連線中的所有使用者
 
+// 用於在解除配對時，告訴前端是誰解除的，原因又是如何
+let pairMsg = {
+    socketId: null,
+    content: ''
+}
+
 // 配對
     // pairUser 設在 socket.pairUser
 
@@ -86,31 +92,43 @@ io.on('connection', function(socket){
     socket.on('unpair', () => {
         // 解除配對
 
+        // 把解除配對的 socketId 與 原因傳給前端
+        pairMsg = {
+            socketId: socket.id,
+            content: '已取消配對'
+        }
         // 確認是否已有配對
         if(socket.pairUser) {
             socket.pairUser.isPairing = false
             socket.pairUser.pairUser = null
-            socket.pairUser.emit('unpair')
+            socket.pairUser.emit('unpair', pairMsg)
         }
         socket.isPairing = false
         socket.pairUser = null
-        socket.emit('unpair')
+        socket.emit('unpair', pairMsg)
     })
 
     socket.on('disconnect', () =>{
         console.log('user disconnected', socket.id);
 
         // 離線前先解除配對
+
+        // 把解除配對的 socketId 與 原因傳給前端
+        pairMsg = {
+            socketId: socket.id,
+            content: '已離線'
+        }
+
         // 確認是否已有配對
         if(socket.pairUser) {
             socket.pairUser.isPairing = false
             socket.pairUser.pairUser = null
-            socket.pairUser.emit('unpair')
+            socket.pairUser.emit('unpair', pairMsg)
         }
 
         socket.isPairing = false
         socket.pairUser = null
-        socket.emit('unpair')
+        socket.emit('unpair', pairMsg)
 
         // 離線就刪除該使用者
         let index = users.indexOf(socket)

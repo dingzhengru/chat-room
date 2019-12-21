@@ -1,16 +1,31 @@
 <template>
 <v-container>
-    <h1>Lobby</h1>
-    
+    <h1>聊天大廳</h1>
     <v-card
-    class="chat-box"
-    dark>
+    class="chat-box">
+        <!-- 這裡把每個 msg 都加上一個 isMax 來判斷是否要放大-->
         <div v-for="(msg, index) in getLobby"
-             :key="index">
-            <span
-            :class="{ 'red--text': lobby.name == msg.name }">
-                {{ msg.name }}: {{ msg.content }}
-            </span>
+             :key="index"
+             class="d-flex">
+            <div
+            class="mt-2 ml-2">
+                <v-avatar 
+                :size="32"
+                :width="140"
+                tile
+                :class="{ 
+                    'indigo': getSocket.id == msg.socketId,
+                    'green': getSocket.id != msg.socketId 
+                }"
+                >
+                    <span class="white--text headline">
+                        {{ msg.name }}
+                    </span>
+                </v-avatar>
+                <span>
+                    {{ msg.content }}
+                </span>
+            </div>
         </div>
     </v-card>
 
@@ -65,8 +80,14 @@ export default {
     data: function() {
         return {
             lobby: {
+                socketId: null,
                 name: null,
-                content: ''
+                content: '',
+            },
+            avatarClass: {
+                size: 32,
+                tile: false,
+                width: null,
             },
             isShowInputName: true,
             lobbyValid: false,
@@ -85,6 +106,9 @@ export default {
         },
         getContent: function() {
             return this.$store.getters['lobby/getContent']
+        },
+        getSocket: function() {
+            return this.$store.getters['socket/getData']
         },
     },
     mounted: function() {
@@ -107,6 +131,7 @@ export default {
     methods: {
         sendMsg: function(lobby) {
             if(this.lobbyValid && lobby && this.getName) {
+                this.lobby.socketId = this.getSocket.id
                 this.lobby.name = this.getName
                 this.$store.dispatch('lobby/addDataAction', lobby)
                 .then(() => {
@@ -119,7 +144,7 @@ export default {
         },
         setContent: function(content) {
             this.$store.commit('lobby/setContent', content)
-        },
+        }
     }
 }
 </script>

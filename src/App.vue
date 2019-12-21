@@ -1,9 +1,14 @@
 <template>
 <v-app>
     <v-content class="main-content">
+        <v-alert 
+        type="info"
+        dismissible
+        v-model="isShowInfo">
+            {{ info }}
+        </v-alert>
         <router-view/>
     </v-content>
-
 
     <v-navigation-drawer
       v-model="drawer"
@@ -18,7 +23,7 @@
                 v-show="mini"
                 color="indigo" 
                 size="48">
-                    <span class="white--text headline">{{ getMinName }}</span>
+                    <span class="white--text headline">{{ getMiniName }}</span>
                 </v-avatar>
                 <v-avatar 
                 v-show="!mini"
@@ -91,7 +96,7 @@
                     <v-text-field
                       v-model="name"
                       ref="nameInputRef"
-                      :counter="10"
+                      :counter="8"
                       :rules="nameRules"
                       label="輸入暱稱..."
                       required
@@ -120,6 +125,8 @@ export default {
     data: function() {
         return {
             name: '',
+            info:'',
+            isShowInfo: false,
             avatarWidth: 200,
             isShowModal: true,
             drawer: true,
@@ -131,7 +138,7 @@ export default {
             nameValid: false,
             nameRules: [
                 v => !!v || '不可為空',
-                v => (v && v.length <= 10) || '不能超過10個字',
+                v => (v && v.length <= 8) || '不能超過8個字',
             ],
         }
     },
@@ -142,7 +149,7 @@ export default {
         getName: function() {
             return this.$store.getters['socket/getName']
         },
-        getMinName: function() {
+        getMiniName: function() {
             let name = this.$store.getters['socket/getName']
             return name.substring(0, 1)
         },
@@ -172,10 +179,15 @@ export default {
                 this.setIsPairing(false)
             })
 
-            this.getSocket.on('unpair', () => {
+            this.getSocket.on('unpair', (pairMsg) => {
                 // 解除配對
 
-                console.log('已解除配對')
+                console.log('已解除配對', pairMsg)
+
+                if(this.getSocket.id != pairMsg.socketId) {
+                    this.info = `對方${ pairMsg.content }`
+                    this.isShowInfo = true
+                }
 
                 this.setIsPaired(false)
                 this.setIsPairing(false)
@@ -196,7 +208,7 @@ export default {
             // set store-socket.name
             if(this.nameValid && 
                name &&
-               name.length <= 10) {
+               name.length <= 8) {
                 localStorage.setItem('name', name)
                 this.$store.commit('socket/setName', name)
                 return true
