@@ -11,9 +11,10 @@ Vue.config.productionTip = false
 import io from 'socket.io-client';
 import socketOptions from './socket-options.js'
 
-let socket = io(socketOptions.url)
+// let socket = io(socketOptions.url)
+let socket = io('https://8080-dot-10296537-dot-devshell.appspot.com/?environment_id=default')
+// let socket = io('114.38.103.71:50001')
 // let socket = io('34.97.218.13:3000')
-// let socket = io('172.18.0.1:3000')
 
 new Vue({
     router,

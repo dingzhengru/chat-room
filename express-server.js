@@ -1,10 +1,16 @@
 const app = require('express')();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const cors = require('cors')
 
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', function(req, res){
+//     res.sendFile(__dirname + '/index.html');
+// });
+
+// 允許跨站存取
+app.use(cors())
+
+const port = 50001
 
 const users = [] // 存放在連線中的所有使用者
 const pairTime = 3000 // 多久配對一次
@@ -141,6 +147,6 @@ io.on('connection', function(socket){
 });
 
 
-http.listen(3000, function(){
-    console.log('listening on *:3000');
+http.listen(port, function(){
+    console.log(`listening on :${ port }`);
 });
