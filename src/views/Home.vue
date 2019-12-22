@@ -59,7 +59,9 @@
                     <v-btn
                     class="yellow darken-2"
                     type="submit"
-                    block>
+                    block
+                    :loading="isSendWait"
+                    :disabled="isSendWait">
                         <v-icon>mdi-send</v-icon>
                     </v-btn>
                 </v-col>
@@ -87,6 +89,8 @@ export default {
                 width: null,
             },
             isShowInputName: true,
+            isSendWait: false,
+            waitTime: 5000,
             lobbyValid: false,
             contentRules: [
                 v => !!v || '不可為空',
@@ -130,6 +134,13 @@ export default {
             if(this.lobbyValid && lobby && this.getName) {
                 this.lobby.socketId = this.getSocket.id
                 this.lobby.name = this.getName
+
+                this.isSendWait = true
+                
+                setTimeout(() => {
+                    this.isSendWait = false
+                }, this.waitTime)
+
                 this.$store.dispatch('lobby/addDataAction', lobby)
                 .then(() => {
                     this.clearLobbyContent()

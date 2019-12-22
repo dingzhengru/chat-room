@@ -207,6 +207,9 @@ export default {
     },
     methods: {
         pair: function() {
+            if(this.getIsPaired || this.getIsPairing)
+                return
+
             console.log('配對')
 
             // 配對中
@@ -229,6 +232,14 @@ export default {
             }
         },
         sendMsg: function(content) {
+            // 已配對、沒有在配對中
+            if(!this.chatValid || 
+                !this.getName || 
+                !content ||
+                !this.getIsPaired ||
+                this.getIsPairing)
+                return
+
             let chat = {
                 socketId: this.getSocket.id,
                 name: this.getName,
