@@ -187,6 +187,9 @@ export default {
                 if(this.getSocket.id != pairMsg.socketId) {
                     this.info = `對方${ pairMsg.content }`
                     this.isShowInfo = true
+                } else {
+                    this.info = `${ pairMsg.content }`
+                    this.isShowInfo = true
                 }
 
                 this.setIsPaired(false)

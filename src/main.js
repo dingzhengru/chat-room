@@ -12,6 +12,8 @@ import io from 'socket.io-client';
 import socketOptions from './socket-options.js'
 
 let socket = io(socketOptions.url)
+// let socket = io('34.97.218.13:3000')
+// let socket = io('172.18.0.1:3000')
 
 new Vue({
     router,

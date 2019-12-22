@@ -63,26 +63,25 @@
     <v-card
     class="chat-box"
     >
-        <!-- <div v-for="(msg, index) in getChats"
-             :key="index">
-            <span
-            :class="{ 'red--text': getSocket.id == msg.id }">
-                {{ msg.name }}: {{ msg.content }}
-            </span>
-        </div> -->
+        
         <!-- 這裡把每個 msg 都加上一個 isMax 來判斷是否要放大-->
         <div v-for="(msg, index) in getChats"
              :key="index"
-             class="d-flex">
+             class="d-flex"
+             :class="{ 'justify-end': getSocket.id != msg.socketId }">
             <div
             class="mt-2 ml-2">
+                <span v-if="getSocket.id != msg.socketId">
+                    {{ msg.content }}
+                </span>
                 <v-avatar 
                 :size="32"
                 :width="msg.isMax ? 150 : null"
                 :tile="msg.isMax ? true : false"
                 :class="{ 
                     'indigo': getSocket.id == msg.socketId,
-                    'green': getSocket.id != msg.socketId 
+                    'green': getSocket.id != msg.socketId,
+                    'mr-2': getSocket.id != msg.socketId,
                 }"
                 @mouseover="mouseoverAvatar(msg)"
                 @mouseleave="mouseleaveAvatar(msg)"
@@ -98,7 +97,7 @@
                         {{ msg.name }}
                     </span>
                 </v-avatar>
-                <span>
+                <span v-if="getSocket.id == msg.socketId">
                     {{ msg.content }}
                 </span>
             </div>
