@@ -7,6 +7,8 @@ app.get('/', function(req, res){
 });
 
 const users = [] // 存放在連線中的所有使用者
+const pairTime = 3000 // 多久配對一次
+
 
 // 用於在解除配對時，告訴前端是誰解除的，原因又是如何
 let pairMsg = {
@@ -76,7 +78,7 @@ io.on('connection', function(socket){
 
                 console.log(users.map(user => user.isPairing))
             }
-        }, 5000)
+        }, pairTime)
     });
 
     // 自訂事件名稱並監聽其事件

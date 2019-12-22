@@ -5,6 +5,7 @@
     *  <a href="#chat">chat</a>
     *  <a href="#pair">pair</a>
     *  <a href="#unpair">unpair</a>
+    *  <a href="#disconnect">disconnect</a>
 *  <a href="#express-serverjs">express-server.js</a>
 *  <a href="#vuetifyjs">Vuetify.js</a>
     *  <a href="#v-bottom-navigation">v-bottom-navigation</a>
@@ -95,10 +96,133 @@ socket.on('chat', chat => {
 ```
 ### pair
 *  client: 單純發送一個信號，表示要配對而已(沒有傳任何資料)
-*  server: 進行配對，並把配對的對象存到 socket.pairUser，且要把對方的 pairUser 也存進我方的socket
+*  server: 進行配對，並把配對的對象存到 socket.pairUser，且要把對方的 pairUser 也存進我方的 socket
 
+client
+```
+this.getSocket.on('pair', (isPaired) => {
+    // 配對事件回傳
+    this.isPaired = truedis
+    this.isPairing = false
+})
+```
+server
+```
+const pairTime = 3000
+
+socket.on('pair', pairMsg => {
+    // 設置配對中
+    socket.isPairing = true
+
+    console.log('paring list', users.map(user => user.isPairing))
+
+    // 不斷搜尋配對對象
+    let pairInterval = setInterval(() => {
+        if(!socket.isPairing) {
+            clearInterval(pairInterval)
+            return
+        }
+
+        console.log(`${ socket.id } is pairing`)
+
+        // 配對條件: 不是自己 && 對方也在配對中(isPairing)
+        socket.pairUser = users.find(user => user.id != socket.id && user.isPairing) || null
+
+        if(socket.pairUser) {
+            console.log(`pair success: ${ socket.id }, ${ socket.pairUser.id }`)
+
+            // 回傳給前端配對成功的訊息(對面的也要)
+            socket.emit('pair', true)
+            socket.pairUser.emit('pair', true)
+
+            // 也把對面的pairUser也設置好
+            socket.pairUser.pairUser = socket
+
+            socket.isPairing = false
+            socket.pairUser.isPairing = false
+
+            console.log(users.map(user => user.isPairing))
+        }
+    }, pairTime)
+});
+```
 ### unpair
 
+client
+```
+this.getSocket.on('unpair', (pairMsg) => {
+    // 解除配對
+
+    // 設置訊息
+    if(this.getSocket.id != pairMsg.socketId) {
+        this.info = `對方${ pairMsg.content }`
+    } else {
+        this.info = `${ pairMsg.content }`
+    }
+    
+    // 顯示訊息
+    this.isShowInfo = true
+
+    // 正在配對 與 已配對 設為 false
+    this.setIsPaired(false)
+    this.setIsPairing(false)
+})
+```
+
+server
+```
+socket.on('unpair', () => {
+    // 解除配對
+
+    // 把解除配對的 socketId 與 原因傳給前端
+    pairMsg = {
+        socketId: socket.id,
+        content: '已取消配對'
+    }
+    // 確認是否已有配對
+    if(socket.pairUser) {
+        socket.pairUser.isPairing = false
+        socket.pairUser.pairUser = null
+        socket.pairUser.emit('unpair', pairMsg)
+    }
+    socket.isPairing = false
+    socket.pairUser = null
+    socket.emit('unpair', pairMsg)
+})
+```
+
+### disconnect
+
+server
+```
+socket.on('disconnect', () =>{
+
+    // 離線前先解除配對
+
+    // 把解除配對的 socketId 與 原因傳給前端
+    pairMsg = {
+        socketId: socket.id,
+        content: '已離線'
+    }
+
+    // 確認是否已有配對
+    if(socket.pairUser) {
+        socket.pairUser.isPairing = false
+        socket.pairUser.pairUser = null
+        socket.pairUser.emit('unpair', pairMsg)
+    }
+
+    socket.isPairing = false
+    socket.pairUser = null
+    socket.emit('unpair', pairMsg)
+
+    // 刪除該使用者
+    let index = users.indexOf(socket)
+    if(index > -1) {
+        users.splice(index, 1)
+    }
+});
+```
 
 ## express-server.js
 

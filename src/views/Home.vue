@@ -71,9 +71,6 @@
 
 <script>
 
-// import io from 'socket.io-client';
-// import socketOptions from '../socket-options.js'
-
 export default {
     name: 'home',
     components: {},

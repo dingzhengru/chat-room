@@ -192,10 +192,6 @@ export default {
         },
     },
     mounted: function() {
-        // let name = this.getName || localStorage.getItem('name')
-        // if(name) {
-        //     this.chat.name = name;
-        // }
 
         if(this.getContent) {
             this.chat.content = this.getContent;
@@ -214,13 +210,11 @@ export default {
             console.log('配對')
 
             // 配對中
-            // this.isPairing = true
             this.setIsPairing(true)
 
             try {
                 this.getSocket.emit('pair')
             } catch {
-                // this.isPairing = false
                 this.setIsPairing(false)
                 console.error('配對失敗')
             }
