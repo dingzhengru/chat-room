@@ -67,6 +67,12 @@
         </v-list>
     </v-navigation-drawer>
     
+    <!-- <v-footer>
+        <div class="text-center">
+            &copy; {{ new Date().getFullYear() }}
+        </div>
+    </v-footer> -->
+
     <!-- Modal -->
 
     <!-- <v-btn

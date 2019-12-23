@@ -15,8 +15,8 @@
     *  <a href="#v-tooltip">v-tooltip</a>
 
 ## 網址
-*  http://dingzhengru.chat-room.nctu.me
-*  使用 nctu 提供的免費網域
+*  dingzhengru-gcp-computed.chat-room.nctu.me 或是 dingzhengru.chat-room.nctu.me
+*  使用 nctu 提供的免費網域 跟 gcp computed 的虛擬機器
 
 ## linux 安裝 node.js
 *  setup_版本.x
@@ -24,7 +24,10 @@
 ```
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 
-sudo apt install nodejs
+or
+
+sudo apt-get install nodejs
+
 ```
 
 ## 永久運行 node.js server
