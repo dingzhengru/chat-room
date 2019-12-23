@@ -1,4 +1,6 @@
-*  <a href="#在 VPS 或 雲端VM 永久運行 node.js server">在 VPS 或 雲端VM 永久運行 node.js server</a>
+*  <a href="#網址">網址</a>
+*  <a href="#linux 安裝 node.js">linux 安裝 node.js</a>
+*  <a href="#永久運行 node.js server">永久運行 node.js server</a>
 *  <a href="#socketio">socket.io</a>
     *  <a href="#install">install</a>
     *  <a href="#connection">connection</a>
@@ -12,12 +14,42 @@
     *  <a href="#v-bottom-navigation">v-bottom-navigation</a>
     *  <a href="#v-tooltip">v-tooltip</a>
 
+## 網址
+*  
 
-
-## 在 VPS 或 雲端VM 永久運行 node.js server
+## linux 安裝 node.js
+*  setup_版本.x
 
 ```
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 
+sudo apt install nodejs
+```
+
+## 永久運行 node.js server
+*  使用 forever 這個 library
+*  forever npm: https://www.npmjs.com/package/forever
+
+```
+sudo npm install -g forever
+
+forever start server.js
+
+// 設定最大重啟次數(m5 = 5次)
+forever -m5 server.js
+
+// 可以看正在運行中程序列表(會列出各個id)
+forever list
+
+// 根據上面所列的 ID，指定要停止的程序
+forever stop 0
+
+// 同上，只是重新啟動
+forever restart 0
+
+// 重啟、停止全部
+forever stopall
+forever restartall
 ```
 
 ## socket.io
