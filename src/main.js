@@ -14,8 +14,8 @@ const host = 'http://localhost'
 const port = '80'
 const url = `${ host }:${ port }`
 
-let socket = io(url)
-// let socket = io()
+// let socket = io(url)
+let socket = io()
 
 new Vue({
     router,
