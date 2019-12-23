@@ -124,7 +124,7 @@ export default {
             this.lobby.content = this.getContent
         }
 
-        this.scrollToBottom()
+        this.scrollToBottom();
 
         // focus input
         this.$nextTick(() => {
@@ -159,10 +159,8 @@ export default {
             this.$store.commit('lobby/setContent', content)
         },
         scrollToBottom: function() {
-            console.log('scrollToBottom')
-            let container = document.querySelector("#container");
-            container.scrollTop = container.scrollHeight;
-            console.log(container.scrollTop, container.scrollHeight)
+            let scrollingElement = document.scrollingElement || document.body;
+            scrollingElement.scrollTop = scrollingElement.scrollHeight;
         }
     }
 }

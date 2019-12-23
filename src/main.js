@@ -14,8 +14,8 @@ const host = 'http://localhost'
 const port = '80'
 const url = `${ host }:${ port }`
 
-// let socket = io(url)
-let socket = io()
+let socket = io(url)
+// let socket = io()
 
 new Vue({
     router,
@@ -39,9 +39,17 @@ new Vue({
 
             this.$store.dispatch('socket/setDataAction', socket)
             .then(data => {
-                // console.log(data.id)
+                setTimeout(() => {
+                    this.scrollToBottom()
+                }, 1000)
             })
         }); 
+    },
+    methods: {
+        scrollToBottom: function() {
+            let scrollingElement = document.scrollingElement || document.body;
+            scrollingElement.scrollTop = scrollingElement.scrollHeight;
+        }
     },
     render: h => h(App)
 }).$mount('#app')

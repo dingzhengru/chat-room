@@ -179,7 +179,9 @@ export default {
 
         // focus name input
         this.$nextTick(() => {
-            this.$refs.nameInputRef.focus();
+            setTimeout(() => {
+                this.$refs.nameInputRef.focus();
+            }, 500)
         });
 
         // set socket(chat event)

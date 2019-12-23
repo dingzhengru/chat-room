@@ -15,7 +15,8 @@
     *  <a href="#v-tooltip">v-tooltip</a>
 
 ## 網址
-*  
+*  http://dingzhengru.chat-room.nctu.me
+*  使用 nctu 提供的免費網域
 
 ## linux 安裝 node.js
 *  setup_版本.x
