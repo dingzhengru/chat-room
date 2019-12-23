@@ -113,6 +113,19 @@
             </v-card-text>
         </v-card>
     </v-dialog>
+
+    <!-- overlay -->
+    <v-overlay 
+    :value="isShowOverlay">
+        <span>
+            與伺服器連線中
+            <v-btn
+            :loading="true"
+            icon>
+                <v-icon>mdi-loading</v-icon>
+            </v-btn>
+        </span>
+    </v-overlay>
 </v-app>
 </template>
 
@@ -125,6 +138,7 @@ export default {
         return {
             name: '',
             info:'',
+            isShowOverlay: true,
             isShowInfo: false,
             avatarWidth: 200,
             isShowModal: true,
@@ -172,6 +186,13 @@ export default {
         this.setSocketChecker(() => {
             // console.log('set socket.on')
 
+            this.isShowOverlay = false
+
+
+            this.getSocket.on('connect', () => {
+                this.isShowOverlay = false
+            })
+
             this.getSocket.on('pair', (isPaired) => {
                 // 配對成功
                 this.setIsPaired(true)
@@ -197,6 +218,10 @@ export default {
 
             this.getSocket.on('chat', chat => {
                 this.pushChats(chat)
+            })
+
+            this.getSocket.on('disconnect', chat => {
+                this.isShowOverlay = true;
             })
         })
     },

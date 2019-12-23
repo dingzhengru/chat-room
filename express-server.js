@@ -1,15 +1,18 @@
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
 const cors = require('cors');
 const history = require('connect-history-api-fallback');
-
-app.use(express.static('dist'))
 
 // 允許跨站存取
 app.use(cors())
 app.use(history());
+
+app.use(express.static('dist'))
+
+// set app > http > socket.io
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 // io.set('origins', '*:*');
 
 const port = process.env.PORT || 8080

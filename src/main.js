@@ -34,7 +34,7 @@ new Vue({
 
         // socket
         socket.on('connect', () => {
-            // console.log(socket.connected, '已連線'); // true
+            console.log(socket.connected, '已連線'); // true
 
             this.$store.dispatch('socket/setDataAction', socket)
             .then(data => {
