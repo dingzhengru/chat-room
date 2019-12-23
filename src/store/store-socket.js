@@ -1,7 +1,6 @@
 // import { db, firebase } from '../firebase.js'
 
 import io from 'socket.io-client';
-import socketOptions from '../socket-options.js'
 
 // socket object
 
@@ -70,13 +69,6 @@ export default {
             return new Promise((resolve, reject) => {
                 commit('setData', data)
                 resolve(data)
-            })
-        },
-        connectAction({ state, commit }, payload) {
-            return new Promise((resolve, reject) => {
-                let socket = io(socketOptions.url)
-                commit('setData', socket)
-                resolve(socket)
             })
         },
     }
