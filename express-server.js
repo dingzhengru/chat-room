@@ -15,7 +15,7 @@ const io = require('socket.io')(http);
 
 // io.set('origins', '*:*');
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 50001
 
 const users = [] // 存放在連線中的所有使用者
 const pairTime = 3000 // 多久配對一次

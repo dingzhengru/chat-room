@@ -1,5 +1,5 @@
 <template>
-<v-container>
+<v-container id="container">
     <h1>聊天大廳</h1>
     <blockquote class="blockquote">
         輸入限制: 最多100個字、五秒輸入一次
@@ -124,6 +124,8 @@ export default {
             this.lobby.content = this.getContent
         }
 
+        this.scrollToBottom()
+
         // focus input
         this.$nextTick(() => {
             this.$refs.lobbyContentRef.focus();
@@ -155,6 +157,12 @@ export default {
         },
         setContent: function(content) {
             this.$store.commit('lobby/setContent', content)
+        },
+        scrollToBottom: function() {
+            console.log('scrollToBottom')
+            let container = document.querySelector("#container");
+            container.scrollTop = container.scrollHeight;
+            console.log(container.scrollTop, container.scrollHeight)
         }
     }
 }

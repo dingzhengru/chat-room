@@ -11,10 +11,11 @@ Vue.config.productionTip = false
 import io from 'socket.io-client';
 
 const host = 'http://localhost'
-const port = '8080'
+const port = '80'
 const url = `${ host }:${ port }`
 
-let socket = io(url)
+// let socket = io(url)
+let socket = io()
 
 new Vue({
     router,
@@ -34,7 +35,7 @@ new Vue({
 
         // socket
         socket.on('connect', () => {
-            console.log(socket.connected, '已連線'); // true
+            // console.log(socket.connected, '已連線'); // true
 
             this.$store.dispatch('socket/setDataAction', socket)
             .then(data => {
