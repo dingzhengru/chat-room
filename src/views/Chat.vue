@@ -210,7 +210,7 @@ export default {
             if(this.getIsPaired || this.getIsPairing)
                 return
 
-            console.log('配對')
+            // console.log('配對')
 
             // 配對中
             this.setIsPairing(true)
@@ -219,16 +219,16 @@ export default {
                 this.getSocket.emit('pair')
             } catch {
                 this.setIsPairing(false)
-                console.error('配對失敗')
+                // console.error('配對失敗')
             }
         },
         unpair: function() {
-            console.log('取消配對')
+            // console.log('取消配對')
 
             try {            
                 this.getSocket.emit('unpair')
             } catch {                
-                console.error('取消配對失敗')
+                // console.error('取消配對失敗')
             }
         },
         sendMsg: function(content) {
@@ -249,7 +249,7 @@ export default {
                 this.getSocket.emit('chat', chat)
                 this.clearChatContent()
             } catch {
-                console.error('傳送資料失敗')
+                // console.error('傳送資料失敗')
             }
         },
         setIsPaired: function(boolean) {
