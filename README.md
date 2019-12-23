@@ -15,7 +15,8 @@
     *  <a href="#v-tooltip">v-tooltip</a>
 
 ## 網址
-*  dingzhengru-gcp-computed.chat-room.nctu.me 或是 dingzhengru.chat-room.nctu.me
+*  http://dingzhengru-gcp-computed.chat-room.nctu.me
+*  或是 http://dingzhengru.chat-room.nctu.me
 *  使用 nctu 提供的免費網域 跟 gcp computed 的虛擬機器
 
 ## linux 安裝 node.js
