@@ -1,16 +1,22 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const cors = require('cors')
+const cors = require('cors');
+const history = require('connect-history-api-fallback');
 
 // app.get('/', function(req, res){
 //     res.sendFile(__dirname + '/index.html');
 // });
 
+app.use(express.static('dist'))
+
 // 允許跨站存取
 app.use(cors())
+app.use(history());
+// io.set('origins', '*:*');
 
-const port = 50001
+const port = 80
 
 const users = [] // 存放在連線中的所有使用者
 const pairTime = 3000 // 多久配對一次

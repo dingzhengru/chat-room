@@ -171,7 +171,7 @@ export default {
 
         // set socket(chat event)
         this.setSocketChecker(() => {
-            console.log('set socket.on')
+            // console.log('set socket.on')
 
             this.getSocket.on('pair', (isPaired) => {
                 // 配對成功
@@ -182,7 +182,7 @@ export default {
             this.getSocket.on('unpair', (pairMsg) => {
                 // 解除配對
 
-                console.log('已解除配對', pairMsg)
+                // console.log('已解除配對', pairMsg)
 
                 if(this.getSocket.id != pairMsg.socketId) {
                     this.info = `對方${ pairMsg.content }`
@@ -240,7 +240,7 @@ export default {
 
             let checker = setInterval(() => {
                 try {
-                    console.log('wait socket connect', this.getSocket)
+                    // console.log('wait socket connect', this.getSocket)
                     if(this.getSocket) {
                         callback()
                         clearInterval(checker)

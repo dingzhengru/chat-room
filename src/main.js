@@ -12,9 +12,11 @@ import io from 'socket.io-client';
 import socketOptions from './socket-options.js'
 
 // let socket = io(socketOptions.url)
-let socket = io('https://8080-dot-10296537-dot-devshell.appspot.com/?environment_id=default')
+// let socket = io('https://8080-dot-10296537-dot-devshell.appspot.com')
 // let socket = io('114.38.103.71:50001')
 // let socket = io('34.97.218.13:3000')
+
+let socket = io('http://localhost:80')
 
 new Vue({
     router,
@@ -34,11 +36,11 @@ new Vue({
 
         // socket
         socket.on('connect', () => {
-            console.log(socket.connected, '已連線'); // true
+            // console.log(socket.connected, '已連線'); // true
 
             this.$store.dispatch('socket/setDataAction', socket)
             .then(data => {
-                console.log(data.id)
+                // console.log(data.id)
             })
         }); 
     },

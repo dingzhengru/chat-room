@@ -1,6 +1,9 @@
 <template>
 <v-container>
     <h1>聊天大廳</h1>
+    <blockquote class="blockquote">
+        輸入限制: 最多100個字、五秒輸入一次
+    </blockquote>
     <v-card
     class="chat-box">
         <!-- 這裡把每個 msg 都加上一個 isMax 來判斷是否要放大-->
@@ -136,7 +139,7 @@ export default {
                 this.lobby.name = this.getName
 
                 this.isSendWait = true
-                
+
                 setTimeout(() => {
                     this.isSendWait = false
                 }, this.waitTime)
