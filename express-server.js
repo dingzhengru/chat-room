@@ -5,10 +5,6 @@ const io = require('socket.io')(http);
 const cors = require('cors');
 const history = require('connect-history-api-fallback');
 
-// app.get('/', function(req, res){
-//     res.sendFile(__dirname + '/index.html');
-// });
-
 app.use(express.static('dist'))
 
 // 允許跨站存取
@@ -16,7 +12,7 @@ app.use(cors())
 app.use(history());
 // io.set('origins', '*:*');
 
-const port = 80
+const port = process.env.PORT || 8080
 
 const users = [] // 存放在連線中的所有使用者
 const pairTime = 3000 // 多久配對一次

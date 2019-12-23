@@ -9,14 +9,12 @@ Vue.config.productionTip = false
 
 // socket
 import io from 'socket.io-client';
-import socketOptions from './socket-options.js'
 
-// let socket = io(socketOptions.url)
-// let socket = io('https://8080-dot-10296537-dot-devshell.appspot.com')
-// let socket = io('114.38.103.71:50001')
-// let socket = io('34.97.218.13:3000')
+const host = 'http://localhost'
+const port = '8080'
+const url = `${ host }:${ port }`
 
-let socket = io('http://localhost:80')
+let socket = io(url)
 
 new Vue({
     router,

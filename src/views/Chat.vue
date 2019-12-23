@@ -4,10 +4,6 @@
     <blockquote class="blockquote">
         配對對象: 正在等待配對的使用者中隨機選取一位
     </blockquote>
-    <!-- <p>{{ getIsPaired }}</p>
-    <p>{{ getIsPairing }}</p>
-    <p>{{ getName }}</p>
-    <p>{{ getSocket.id }}</p> -->
     <div>
         <v-row>
             <v-col
