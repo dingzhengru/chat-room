@@ -1,3 +1,6 @@
+大廳: 公開的多人聊天室 (firebase)
+聊天室: 一對一配對的聊天室 (socket.io)
+
 *  <a href="#網址">網址</a>
 *  <a href="#linux 安裝 node.js">linux 安裝 node.js</a>
 *  <a href="#永久運行 node.js server">永久運行 node.js server</a>
