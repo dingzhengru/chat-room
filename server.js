@@ -10,6 +10,10 @@ app.use(history());
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 // set app > http > socket.io
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
