@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const history = require('connect-history-api-fallback');
+const serveStatic = require('serve-static');
 const path = require('path');
 
 // 允許跨站存取
 app.use(cors());
 app.use(history());
 
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/', serveStatic(path.join(__dirname, '/dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
