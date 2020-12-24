@@ -1,5 +1,5 @@
-- 大廳: 公開的多人聊天室 (firebase)
-- 聊天室: 一對一配對的聊天室 (socket.io)
+大廳: 公開的多人聊天室 (firebase)
+聊天室: 一對一配對的聊天室 (socket.io)
 
 - [demo](#demo)
 - [linux 安裝 node.js](#linux-安裝-nodejs)
