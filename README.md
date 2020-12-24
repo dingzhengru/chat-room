@@ -1,21 +1,21 @@
-大廳: 公開的多人聊天室 (firebase)
-聊天室: 一對一配對的聊天室 (socket.io)
+- 大廳: 公開的多人聊天室 (firebase)
+- 聊天室: 一對一配對的聊天室 (socket.io)
 
-- <a href="#網址">網址</a>
-- <a href="#linux 安裝 node.js">linux 安裝 node.js</a>
-- <a href="#永久運行 node.js server">永久運行 node.js server</a>
-- <a href="#socketio">socket.io</a>
-  - <a href="#install">install</a>
-  - <a href="#connection">connection</a>
-  - <a href="#socketon">socket.on</a>
-  - <a href="#chat">chat</a>
-  - <a href="#pair">pair</a>
-  - <a href="#unpair">unpair</a>
-  - <a href="#disconnect">disconnect</a>
-- <a href="#express-serverjs">express-server.js</a>
-- <a href="#vuetifyjs">Vuetify.js</a>
-  - <a href="#v-bottom-navigation">v-bottom-navigation</a>
-  - <a href="#v-tooltip">v-tooltip</a>
+- [demo](#demo)
+- [linux 安裝 node.js](#linux-安裝-nodejs)
+- [永久運行 node.js server](#永久運行-nodejs-server)
+- [socket.io](#socketio)
+  - [install](#install)
+  - [connection](#connection)
+  - [socket.on](#socketon)
+  - [chat](#chat)
+  - [pair](#pair)
+  - [unpair](#unpair)
+  - [disconnect](#disconnect)
+- [express-server.js](#express-serverjs)
+- [Vuetify.js](#vuetifyjs)
+  - [v-bottom-navigation](#v-bottom-navigation)
+  - [v-tooltip](#v-tooltip)
 
 ## demo
 
