@@ -1,29 +1,29 @@
 大廳: 公開的多人聊天室 (firebase)
 聊天室: 一對一配對的聊天室 (socket.io)
 
-*  <a href="#網址">網址</a>
-*  <a href="#linux 安裝 node.js">linux 安裝 node.js</a>
-*  <a href="#永久運行 node.js server">永久運行 node.js server</a>
-*  <a href="#socketio">socket.io</a>
-    *  <a href="#install">install</a>
-    *  <a href="#connection">connection</a>
-    *  <a href="#socketon">socket.on</a>
-    *  <a href="#chat">chat</a>
-    *  <a href="#pair">pair</a>
-    *  <a href="#unpair">unpair</a>
-    *  <a href="#disconnect">disconnect</a>
-*  <a href="#express-serverjs">express-server.js</a>
-*  <a href="#vuetifyjs">Vuetify.js</a>
-    *  <a href="#v-bottom-navigation">v-bottom-navigation</a>
-    *  <a href="#v-tooltip">v-tooltip</a>
+- <a href="#網址">網址</a>
+- <a href="#linux 安裝 node.js">linux 安裝 node.js</a>
+- <a href="#永久運行 node.js server">永久運行 node.js server</a>
+- <a href="#socketio">socket.io</a>
+  - <a href="#install">install</a>
+  - <a href="#connection">connection</a>
+  - <a href="#socketon">socket.on</a>
+  - <a href="#chat">chat</a>
+  - <a href="#pair">pair</a>
+  - <a href="#unpair">unpair</a>
+  - <a href="#disconnect">disconnect</a>
+- <a href="#express-serverjs">express-server.js</a>
+- <a href="#vuetifyjs">Vuetify.js</a>
+  - <a href="#v-bottom-navigation">v-bottom-navigation</a>
+  - <a href="#v-tooltip">v-tooltip</a>
 
-## 網址
-*  http://dingzhengru-gcp-computed.chat-room.nctu.me
-*  或是 http://dingzhengru.chat-room.nctu.me
-*  使用 nctu 提供的免費網域 跟 gcp computed 的虛擬機器
+## demo
+
+- https://ding-chat-room.herokuapp.com/
 
 ## linux 安裝 node.js
-*  setup_版本.x
+
+- setup\_版本.x
 
 ```
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
@@ -35,8 +35,9 @@ sudo apt-get install nodejs
 ```
 
 ## 永久運行 node.js server
-*  使用 forever 這個 library
-*  forever npm: https://www.npmjs.com/package/forever
+
+- 使用 forever 這個 library
+- forever npm: https://www.npmjs.com/package/forever
 
 ```
 sudo npm install -g forever
@@ -63,9 +64,11 @@ forever restartall
 ## socket.io
 
 ### install
-```npm install --save socket.io```
+
+`npm install --save socket.io`
 
 server.js (with express)
+
 ```
 const app = require('express')();
 const http = require('http').createServer(app);
@@ -77,6 +80,7 @@ http.listen(3000, function(){
 ```
 
 client.js
+
 ```
 import io from 'socket.io-client';
 
@@ -86,19 +90,22 @@ let socket = io(url);
 ```
 
 ### connection
-*  連上時觸發，並可在裡面設置自訂的事件並監聽
-server.js
+
+- 連上時觸發，並可在裡面設置自訂的事件並監聽
+  server.js
+
 ```
 io.on('connection', function(socket){
     console.log('a user connected');
 });
 ```
 
-
 ### socket.on
-*  自訂事件並監聽、傳資料、廣播
+
+- 自訂事件並監聽、傳資料、廣播
 
 server.js
+
 ```
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -115,7 +122,9 @@ io.on('connection', function(socket){
     });
 });
 ```
+
 client
+
 ```
 socket.on('chat message', function(msg){
     console.log('message: ' + msg);
@@ -123,17 +132,21 @@ socket.on('chat message', function(msg){
 ```
 
 ### chat
-*  client: 單純把輸入的內容傳給 server 
-*  server: 把接收到的 msg 發送給此socket與socket.pairUser
+
+- client: 單純把輸入的內容傳給 server
+- server: 把接收到的 msg 發送給此 socket 與 socket.pairUser
 
 client
+
 ```
 this.getSocket.on('chat', (chat) => {
     console.log(chat.content)
     this.chats.push(chat)
 })
 ```
+
 server
+
 ```
 socket.on('chat', chat => {
     // 確認配對
@@ -143,11 +156,14 @@ socket.on('chat', chat => {
     socket.pairUser.emit('chat', chat)
 })
 ```
+
 ### pair
-*  client: 單純發送一個信號，表示要配對而已(沒有傳任何資料)
-*  server: 進行配對，並把配對的對象存到 socket.pairUser，且要把對方的 pairUser 也存進我方的 socket
+
+- client: 單純發送一個信號，表示要配對而已(沒有傳任何資料)
+- server: 進行配對，並把配對的對象存到 socket.pairUser，且要把對方的 pairUser 也存進我方的 socket
 
 client
+
 ```
 this.getSocket.on('pair', (isPaired) => {
     // 配對事件回傳
@@ -155,7 +171,9 @@ this.getSocket.on('pair', (isPaired) => {
     this.isPairing = false
 })
 ```
+
 server
+
 ```
 const pairTime = 3000
 
@@ -195,9 +213,11 @@ socket.on('pair', pairMsg => {
     }, pairTime)
 });
 ```
+
 ### unpair
 
 client
+
 ```
 this.getSocket.on('unpair', (pairMsg) => {
     // 解除配對
@@ -208,7 +228,7 @@ this.getSocket.on('unpair', (pairMsg) => {
     } else {
         this.info = `${ pairMsg.content }`
     }
-    
+
     // 顯示訊息
     this.isShowInfo = true
 
@@ -219,6 +239,7 @@ this.getSocket.on('unpair', (pairMsg) => {
 ```
 
 server
+
 ```
 socket.on('unpair', () => {
     // 解除配對
@@ -243,6 +264,7 @@ socket.on('unpair', () => {
 ### disconnect
 
 server
+
 ```
 socket.on('disconnect', () =>{
 
@@ -274,9 +296,8 @@ socket.on('disconnect', () =>{
 ```
 
 ## express-server.js
-*  socket.io server & serve dist server
 
-
+- socket.io server & serve dist server
 
 ```
 const express = require('express');
@@ -436,15 +457,16 @@ http.listen(port, function(){
 ```
 
 ## Vuetify.js
-*  Vue Material Design Component Framework(質感設計框架)
-*  icons 都在 https://materialdesignicons.com/ (在v-icon裡填入"mdi-圖片名稱")
+
+- Vue Material Design Component Framework(質感設計框架)
+- icons 都在 https://materialdesignicons.com/ (在 v-icon 裡填入"mdi-圖片名稱")
 
 vue cli 3
-```vue add vuetify```
-
+`vue add vuetify`
 
 ### v-bottom-navigation
-*  bug 修復需在 style 裡+上以下這段
+
+- bug 修復需在 style 裡+上以下這段
 
 ```
 .v-item-group.v-bottom-navigation .v-btn.v-size--default {
@@ -453,14 +475,16 @@ vue cli 3
 ```
 
 ### v-tooltip
-*  如何在disabled button 上顯示(btn外多包一個div，且v-on放在div上)
 
-如何在disabled button 上顯示
+- 如何在 disabled button 上顯示(btn 外多包一個 div，且 v-on 放在 div 上)
+
+如何在 disabled button 上顯示
+
 ```
-<v-tooltip 
+<v-tooltip
 top
 :disabled="isPaired">
-    <template 
+    <template
     v-slot:activator="{ on }">
         <div
         v-on="on">
