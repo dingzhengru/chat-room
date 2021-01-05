@@ -17,7 +17,7 @@
 
 ## demo
 
-- https://ding-chat-room.herokuapp.com/
+- https://ding-chat-room.herokuapp.com/ (heroku 第一次打開會比較久，因為機器會自動休眠)
 
 ## server
 
