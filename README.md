@@ -1,4 +1,4 @@
-大廳: 公開的多人聊天室 (firebase)
+大廳: 公開的多人聊天室 (firebase)  
 聊天室: 一對一配對的聊天室 (socket.io)
 
 - [demo](#demo)
